@@ -8,7 +8,7 @@ pipeline {
         
         stage('Cloning Git repository') {
           steps {
-                git branch : 'test', url: 'https://github.com/TheCountt/docker-php-todo.git'
+                git branch : 'main', url: 'https://github.com/TheCountt/docker-php-todo.git'
             }
         }
 
