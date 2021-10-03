@@ -6,6 +6,7 @@ pipeline {
     agent any
     stages {
         
+        
         stage('Cloning Git repository') {
           steps {
                 git branch : 'main', url: 'https://github.com/TheCountt/docker-php-todo.git'
