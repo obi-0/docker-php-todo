@@ -23,7 +23,7 @@ pipeline {
         stage('Push Image') {
             steps{
                 script {
-                    dcoker.withRegistry( 'https://registry.hub.docker.com/', 'docker-hub-cred' ) {
+                    dcoker.withRegistry( 'https://registry.hub.docker.com/thecountt/php-todo', 'docker-hub-cred' ) {
                         dockerImage.push( 'docker.build registry + ":$BUILD_NUMBER"' )
                     }
                 }
