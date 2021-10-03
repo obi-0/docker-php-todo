@@ -4,7 +4,6 @@ LABEL Dare=dare@zooto.io
 #install zip, unzip extension, git, mysql-client
 RUN apt-get update --fix-missing && apt-get install -y \
   default-mysql-client \
-  git \
   unzip \
   zip \
   curl \
