@@ -23,8 +23,8 @@ pipeline {
         stage('Push Image') {
             steps{
                 script {
-                    dcoker.withRegistry( '', registryCredential ) {
-                        dockerImage.push()
+                    dcoker.withRegistry( 'https://registry.hub.docker.com/', 'docker-hub-cred' ) {
+                        dockerImage.push( 'docker.build registry + ":$BUILD_NUMBER"' )
                     }
                 }
             }
