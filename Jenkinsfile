@@ -16,15 +16,14 @@ pipeline {
             steps{
                 script {
                     dockerImage = docker.build registry + ":$BUILD_NUMBER"
-                }
             }
         }
 
         stage('Push Image') {
             steps{
                 script {
-                    dcoker.withRegistry( 'https://registry.hub.docker.com/thecountt/php-todo', 'docker-hub-cred' ) {
-                        dockerImage.push( 'docker.build registry + ":$BUILD_NUMBER"' )
+                    dcoker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
                     }
                 }
             }
