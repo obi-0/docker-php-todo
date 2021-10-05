@@ -21,6 +21,9 @@ RUN a2enmod rewrite
 # Install composer
 RUN curl -sS https://getcomposer.org/installer |php && mv composer.phar /usr/local/bin/composer
 
+# Add credentials
+ADD .env.sample ./.env
+
 # Copy application source
 COPY . /var/www
 RUN chown -R www-data:www-data /var/www
