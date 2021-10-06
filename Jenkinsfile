@@ -2,7 +2,8 @@ pipeline {
     environment {
         registry = "thecountt/docker-php-todo"
         registryCredential = 'docker-hub-cred'
-        }
+    }
+    
     agent any
     stages {
         
@@ -14,12 +15,14 @@ pipeline {
             }
         }
 
+        
         stage('Cloning Git repository') {
           steps {
                 git branch : 'main', url: 'https://github.com/TheCountt/docker-php-todo.git'
             }
         }
 
+        
         stage('Build Image') {
             steps{
                 script {
@@ -28,6 +31,7 @@ pipeline {
             }
         }
 
+        
         stage("Start the app") {
             steps {
                 sh "docker-compose up -d"
@@ -65,6 +69,7 @@ pipeline {
             }
         }
 
+        
         stage('Remove Unused docker image') {
             steps{
                 sh "docker rmi $registry:$BUILD_NUMBER"
