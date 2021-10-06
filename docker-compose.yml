@@ -1,0 +1,36 @@
+version: "3.9"
+services:
+ todo_frontend:
+    build:
+      context: .
+    container_name: php-website
+    restart: unless-stopped
+    volumes:
+      - todo_frontend:/php-todo
+    ports:
+      - "${APP_PORT}:80"
+    links:
+      - db
+    depends_on:
+      - db
+
+ db:
+    image: mysql/mysql-server:latest
+    container_name: php-db-server
+    hostname: "${HOSTNAME}"
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+    
+    ports:
+      - "${DB_PORT}:3306"
+
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  todo_frontend:
+  db:
