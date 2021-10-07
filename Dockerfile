@@ -8,8 +8,7 @@ RUN apt-get update --fix-missing && apt-get install -y \
   unzip \
   zip \
   curl \
-  wget \
-  python3-dotenv
+  wget
   
 # Install docker php dependencies
 RUN docker-php-ext-install pdo_mysql mysqli
