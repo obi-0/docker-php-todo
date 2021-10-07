@@ -59,21 +59,21 @@ pipeline {
         }
 
 
-//         stage('Push Image') {
-//             steps{
-//                 script {
-//                     docker.withRegistry( '', registryCredential ) {
-//                         dockerImage.push()
-//                     }
-//                 }
-//             }
-//         }
+        stage('Push Image') {
+            steps{
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
 
         
-//         stage('Remove Unused docker image') {
-//             steps{
-//                 sh "docker rmi $registry:$BUILD_NUMBER"
-//             }
-//         }
+        stage('Remove Unused docker image') {
+            steps{
+                sh "docker rmi $registry:$BUILD_NUMBER"
+            }
+        }
     }
 }
