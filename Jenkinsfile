@@ -1,7 +1,7 @@
 pipeline {
     environment {
         registry = "thecountt/docker-php-todo"
-        registryCredential = 'docker-hub-cred'
+        registryCredential = "docker-hub-cred"
     }
     
     agent any
