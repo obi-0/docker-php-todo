@@ -46,13 +46,9 @@ pipeline {
                         def response = httpRequest 'http://localhost:8000'
 
                         if (http.responseCode == 200) {
-                        response = new JsonSlurper().parseText(http.inputStream.getText('UTF-8'))
-                        }
-                        else {
-                        response = new JsonSlurper().parseText(http.errorStream.getText('UTF-8'))
-                         }
+                        sh 'echo "HttpRequest Successsful"'
 
-                        println "response: ${response}"
+                        }
                     }
                 }
             }
