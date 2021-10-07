@@ -19,9 +19,6 @@ COPY start-apache /usr/local/bin
 RUN a2enmod rewrite
 
 RUN curl -sS https://getcomposer.org/installer |php && mv composer.phar /usr/local/bin/composer
-RUN php artisan migrate
-RUN php artisan db:seed
-RUN php artisan key:generate
 
 # Copy application source
 COPY . /var/www
