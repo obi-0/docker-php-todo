@@ -23,22 +23,21 @@ pipeline {
         }
 
         
-        stage('Build Image') {
-            steps{
-                script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
-                }
-            }
-        }
+        // stage('Build Image') {
+        //     steps{
+        //         script {
+        //             dockerImage = docker.build registry + ":$BUILD_NUMBER"
+        //         }
+        //     }
+        // }
 
         
         stage("Start the app") {
             steps {
-		// script {
-		//     docker.withRegistry( '', registryCredential ){
-                    sh "docker-compose up -d"
-		        }
-            }
+                echo "PATH is: $PATH"
+                sh "/usr/bin/docker-compose up -d"
+		    }
+        }
      	
         stage("Test endpoint") {
             steps {
