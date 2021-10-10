@@ -36,7 +36,7 @@ pipeline {
         stage("Start the app") {
             steps {
                 echo "PATH is: $PATH"
-                sh "/usr/bin/docker run --network tooling_app_network --name php-website -p 8000:80 -d -it thecountt/php-todo:10"
+                sh "/usr/bin/docker run --network tooling_app_network --name php-website -p 8000:80 -d -it thecountt/php-todo:1.0.0"
 		    }
         }
      	
