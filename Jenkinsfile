@@ -2,7 +2,7 @@ pipeline {
     environment {
         registry = "thecountt/docker-php-todo"
         registryCredential = "docker-hub-cred"
-        PATH = "$PATH:/usr/bin"
+        PATH = "$PATH:/usr/local/bin"
     }
     
     agent any
@@ -38,7 +38,7 @@ pipeline {
                 script {
                     docker.withRegistry( '', registryCredential ) {
                         echo "PATH is: $PATH"
-                        sh "/usr/bin/docker-compose up -d"
+                        sh "/usr/local/bin/docker-compose up -d"
                     }
 		        }
             }
