@@ -15,44 +15,31 @@ pipeline {
             }
         }
 
-    stage('Checkout SCM') {
-    agent any
-            steps {
-                git branch: 'main', url: 'https://github.com/TheCountt/docker-php-todo.git'
+        
+        stage('Cloning Git repository') {
+          steps {
+                git branch : 'main', url: 'https://github.com/TheCountt/docker-php-todo.git'
             }
         }
 
+        
+        stage('Build Image') {
+            steps{
+                script {
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                }
+            }
+        }
 
-// stage('build image') {
-//             steps {
-//                 script {
-//                     docker.withRegistry('https://registry.hub.docker.com/', 'docker-hub-cred') {
-//                         def customImage = docker.build("${image}", 'docker-php-todo/')
-
-// 		     }
-// 	     }
-//       }
-//     }
-
-
-//         stage('Build') {
-//             agent any
-// 	            environment {
-//                    image = "thecountt/docker-php-todo"
-//                    image_tag = "10"
-//        }
-// }
-
+        
         stage("Start the app") {
             steps {
-                script {
-                    docker.withRegistry( '', registryCredential ){
-                     sh "cd php-todo"
-                     sh "docker-compose up -d --build"
+		// script {
+		//     docker.withRegistry( '', registryCredential ){
+                    sh "docker-compose up -d"
+		        }
             }
-        }
-    }
-}
+     	
         stage("Test endpoint") {
             steps {
                 script {
@@ -68,5 +55,22 @@ pipeline {
             }
         }
 
+
+        stage('Push Image') {
+            steps{
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+
+        
+        stage('Remove Unused docker image') {
+            steps{
+                sh "docker rmi $registry:$BUILD_NUMBER"
+            }
+        }
     }
 }
