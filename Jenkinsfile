@@ -36,12 +36,15 @@ pipeline {
         stage("Start the app") {
             steps {
                 script {
-                docker.withRegistry( '', registryCredential )
+                docker.withRegistry( '', registryCredential ) {
                 echo "PATH is: $PATH"
                 sh "/usr/bin/docker run --network tooling_app_network --name php-website -p 8000:80 -d thecountt/docker-php-todo:10"
 		    }
         }
-     	
+    }
+}	
+
+
         stage("Test endpoint") {
             steps {
                 script {
