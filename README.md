@@ -140,7 +140,7 @@ docker login
 docker push thecountt/php-todo:1.0.0
 ```
 
-### CI/CD with Jenkins
+## CI/CD with Jenkins
 - Create a directory and name it `jenkins` and change inot the directory.
 - Create a bridge network in Docker using the following docker network create command. We will use the network we have created earlier(tooling_app_network)
 
@@ -149,3 +149,156 @@ docker push thecountt/php-todo:1.0.0
 ```
 docker pull docker:dind
 ```
+
+- Customise official Jenkins Docker image, by executing the two steps below:
+
+    a. Create Dockerfile with the following content:
+
+```
+FROM jenkins/jenkins:2.303.1-jdk11
+USER root
+RUN apt-get update && apt-get install -y apt-transport-https \
+       ca-certificates curl gnupg2 \
+       software-properties-common
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+RUN apt-key fingerprint 0EBFCD88
+RUN add-apt-repository \
+       "deb [arch=amd64] https://download.docker.com/linux/debian \
+       $(lsb_release -cs) stable"
+RUN apt-get update && apt-get install -y docker-ce-cli
+USER jenkins
+RUN jenkins-plugin-cli --plugins "blueocean:1.25.0 docker-workflow:1.26"
+
+```
+
+   b. Build a new docker image from this Dockerfile and assign the image a meaningful name, e.g. "myjenkins-blueocean:1.1":
+```
+docker build -t myjenkins-blueocean:1.1 . 
+```
+- Create a file and name it jenkins.yml. Paste the code below:
+
+```
+version: "3.9"
+services:
+    docker:
+        image: "docker:dind"
+        container_name: jenkins-docker
+        privileged: true
+        network_mode: tooling_app_network
+        
+        environment:
+            - DOCKER_TLS_CERTDIR=/certs
+            - DOCKER_DRIVER=overlay2
+        volumes:
+            - 'jenkins-docker-certs:/certs/client'
+            - 'jenkins-data:/var/jenkins_home'
+        ports:
+            - "2376:2376"
+
+    myjenkins-blueocean:
+        image: "myjenkins-blueocean:1.1"
+        container_name: jenkins-blueocean
+        network_mode: tooling_app_network
+        environment:
+            - DOCKER_HOST=tcp://docker:2376
+            - DOCKER_CERT_PATH=/certs/client
+            - DOCKER_TLS_VERIFY=1
+        ports:
+            - "8080:8080"
+            - "50000:50000"
+        
+        volumes:
+            - "jenkins-data:/var/jenkins_home"
+            - "jenkins-docker-certs:/certs/client:ro"
+        
+volumes:
+   docker:
+   myjenkins-blueocean:
+   jenkins-docker-certs:
+   jenkins-data:
+```
+- Spin up jenkins containers:
+```
+docker-compose -f jenkins.yml up -d
+```
+
+### Unlocking Jenkins
+- When you first access a new Jenkins instance, you are asked to unlock it using an automatically-generated password.
+
+- Browse to http://localhost:8080 (or whichever port you configured for Jenkins when installing it) and wait until the Unlock Jenkins page appears
+
+- If you are running Jenkins in Docker using the official jenkins/jenkins image you can use:
+
+`sudo docker exec jenkins-blueocean cat /var/jenkins_home/secrets/initialAdminPassword` to print the password in the console without having to exec into the container.
+
+
+### Jenkins Pipeline
+
+- Create a new branch from our main branch in your github repo and name it "feature". So we have two github branches: main and feature
+
+- Create a new repository in your dockerhub account to push image into
+
+- Create a Jenkinsfile in the php-todo directory. Write a Jenkinsfile that will pick up the build context from the referenced github repo branch, simulate a Docker Build and a
+Docker Push to the dockerhub registry.
+
+
+```
+pipeline {
+    environment {
+        registry = "thecountt/docker-php-todo"
+        registryCredential = 'docker-hub-cred'
+    }
+    agent any
+    stages {
+        
+        stage('Cloning Git repository') {
+          steps {
+                git branch : 'main', url: 'https://github.com/TheCountt/docker-php-todo.git'
+            }
+        }
+
+        stage('Build Image') {
+            steps{
+                script {
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                }
+            }
+        }
+
+        stage('Push Image') {
+            steps{
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+
+        stage('Remove Unused docker image') {
+            steps{
+                sh "docker rmi $registry:$BUILD_NUMBER"
+            }
+        }
+
+    }
+}
+```
+
+
+- Create a Multibranch Pipeline using Blue Ocean.
+
+- If you run a build, the pipeline will fail because we have not configured our dockerhub
+(registryCredential) in jenkins.
+  a. Go to jenkins home, click on your pipeline. On the left-hand side, click on "configure"
+  b. Click on "Properties".
+  c. Fill the "Docker registry URL"
+  c. In the "Registry credentials", click on "Add". Put your dockerhub account credentials
+     (Username and Password) and save it.
+
+- Click on "Scan Repository"
+
+- Run a build now on each pipeline now. The two pipelines should be successful
+
+- Create a github webhook so jenkins can automatically pickup changes and run a build.
+
