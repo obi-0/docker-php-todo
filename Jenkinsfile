@@ -38,7 +38,7 @@ pipeline {
                 script {
                     docker.withRegistry( '', registryCredential ) {
                         echo "PATH is: $PATH"
-                        sh "/usr/local/bin/docker-compose up -d"
+                        sh "docker-compose up -d"
                     }
 		        }
             }
