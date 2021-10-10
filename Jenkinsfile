@@ -48,7 +48,7 @@ pipeline {
                 script {
                     docker.withRegistry( '', registryCredential ){
                      sh "cd php-todo"
-                     sh "docker-compose up -d"
+                     sh "docker-compose up -d --build"
             }
         }
     }
