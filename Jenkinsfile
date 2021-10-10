@@ -2,6 +2,7 @@ pipeline {
     environment {
         registry = "thecountt/docker-php-todo"
         registryCredential = "docker-hub-cred"
+        PATH = "$PATH:/usr/local/bin"
     }
     
     agent any
@@ -35,7 +36,7 @@ pipeline {
         stage("Start the app") {
             steps {
                 echo "PATH is: $PATH"
-                sh "/usr/bin/docker-compose up -d"
+                sh "/usr/local/bin/docker-compose up -d"
 		    }
         }
      	
