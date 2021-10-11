@@ -35,7 +35,6 @@ pipeline {
         stage("Test endpoint") {
             steps {
                 script {
-                    while (true) {
                         def response = httpRequest 'http://localhost:8000'
 
                         if (response.status == 200) {

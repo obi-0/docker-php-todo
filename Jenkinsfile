@@ -45,31 +45,31 @@ pipeline {
             }
         }
         
-        stage("Test endpoint") {
+        stage("Test endpoint and Push Image") {
             steps {
                 script {
-                    while (true) {
-                        def response = httpRequest 'http://localhost:8000'
-
-                        if (http.responseCode == 200) {
-                        sh 'echo "HttpRequest Successsful"'
-
-                        }
+                        def response = httpRequest "http://localhost:8000"
+                        println("Status: "+response.status)
+                        println("Content: "+response.content)
+                        if (response.status == 200) {
+                            docker.withRegistry( '', registryCredential ) {
+                            dockerImage.push()
+                        } 
                     }
                 }
             }
         }
 
 
-        stage('Push Image') {
-            steps{
-                script {
-                    docker.withRegistry( '', registryCredential ) {
-                        dockerImage.push()
-                    }
-                }
-            }
-        }
+        // stage('Push Image') {
+        //     steps{
+        //         script {
+        //             docker.withRegistry( '', registryCredential ) {
+        //                 dockerImage.push()
+        //             }
+        //         }
+        //     }
+        // }
 
         
         stage('Remove Unused docker image') {
