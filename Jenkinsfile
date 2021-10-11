@@ -31,7 +31,7 @@ pipeline {
                      sh   "dockerImage = docker.build registry + ':$BUILD_NUMBER'"
                     }
                 }
-            }
+            
         
 
         
