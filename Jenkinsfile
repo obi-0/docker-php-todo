@@ -41,7 +41,7 @@ pipeline {
                     while (true) {
                         def response = httpRequest 'http://localhost:8000'
                         if (response.status == 200) {
-                           withCredentials([usernameColonPassword(credentialsId: '', variable: 'Registry')]) {
+                           withCredentials([usernameColonPassword(credentialsId: 'docker-hub-cred-2', variable: 'Registry')]) {
                                 sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
                                 sh "docker push thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
                             }
