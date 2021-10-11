@@ -1,78 +1,53 @@
 pipeline {
-    environment {
-        registry = "thecountt/docker-php-todo"
-        registryCredential = "docker-hub-cred"
-        PATH = "$PATH:/usr/bin"
-    }
-    
     agent any
+
     stages {
-        
+
         stage('Initial Cleanup') {
-          steps {
-                dir("${WORKSPACE}") {
-                    deleteDir()
-                }
-            }
-        }
-
-        
-        stage('Cloning Git repository') {
-          steps {
-                git branch : 'main', url: 'https://github.com/TheCountt/docker-php-todo.git'
-            }
-        }
-
-        
-        stage('Build Image') {
             steps {
-                // script {
-                    // docker.withRegistry( '', registryCredential ) {
-                     sh   "dockerImage = docker.build registry + ':$BUILD_NUMBER'"
-                    }
+                dir("${WORKSPACE}") {
+                deleteDir()
                 }
-            
+            }
+        }
+  
+        stage('Checkout SCM') {
+            steps {
+                git branch: 'main', url: 'https://github.com/TheCountt/docker-php-todo.git'
+            }
+        }
         
-
-        
-        stage("Start the app") {
+        stage('Build image') {
+            steps {
+                sh "docker build -t thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER} ."
+            }
+        }
+        stage("Start application") {
             steps {
                 sh "docker-compose --version"
                 sh "docker-compose up -d"
-                    
             }
         }
-
-
-        stage("Test endpoint and Push Image to registry") {
+        stage("Test Endpoint and Push Image to Registry") {
             steps {
                 script {
-                        while (true) {
-                        def response = httpRequest "http://localhost:8000"
+                    while (true) {
+                        def response = httpRequest 'http://localhost:8000'
                         if (response.status == 200) {
-                            docker.withRegistry( '', registryCredential ) {
-                            dockerImage.push()
+                            withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+                                sh "docker push thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+                            }
+                            break 
                         }
-                        break 
                     }
                 }
             }
         }
-    }
-        // stage('Push Image') {
-        //     steps{
-        //         script {
-        //             docker.withRegistry( '', registryCredential ) {
-        //                 dockerImage.push()
-        //             }
-        //         }
-        //     }
-        // }
-
-        
-        stage('Remove Unused docker image') {
+ 
+        stage ("Remove images") {
             steps {
-                sh "docker rmi $registry:$BUILD_NUMBER"
+                sh "docker system prune -af"
             }
         }
     }
