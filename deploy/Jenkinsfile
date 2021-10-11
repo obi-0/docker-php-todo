@@ -37,8 +37,8 @@ pipeline {
                 script {
                     while (true) {
                         def response = httpRequest "http://localhost:8000"
-                        println("Status: "+response.status)
-                        println("Content: "+response.content)
+                        // println("Status: "+response.status)
+                        // println("Content: "+response.content)
                     if (response.status == 200) {
                         sh "echo 'httpRequest Successful'"
                     }

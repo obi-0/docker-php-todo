@@ -48,6 +48,7 @@ pipeline {
         stage("Test endpoint and Push Image") {
             steps {
                 script {
+                        while (true) {
                         def response = httpRequest "http://localhost:8000"
                         println("Status: "+response.status)
                         println("Content: "+response.content)
