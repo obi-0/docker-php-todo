@@ -40,7 +40,7 @@ pipeline {
                         if (response.status == 200) {
                         sh 'echo "httpRequest Successsful"'
 
-                        }
+                        
                     }
                 }
             }
