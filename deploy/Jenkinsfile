@@ -38,8 +38,8 @@ pipeline {
                     while (true) {
                         def response = httpRequest 'http://localhost:8000'
 
-                        if (http.responseCode == 200) {
-                        sh 'echo "HttpRequest Successsful"'
+                        if (response.status == 200) {
+                        sh 'echo "httpRequest Successsful"'
 
                         }
                     }
