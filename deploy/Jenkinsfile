@@ -35,11 +35,12 @@ pipeline {
         stage("Test endpoint") {
             steps {
                 script {
+                    while (true) {
                         def response = httpRequest "http://localhost:8000"
                         println("Status: "+response.status)
                         println("Content: "+response.content)
 
-                        
+                    }    
                     
                 } 
             }
