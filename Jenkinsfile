@@ -35,33 +35,28 @@ pipeline {
         
         stage("Start the app") {
             steps {
-                script {
-                    docker.withRegistry( '', registryCredential ) {
-                        echo "PATH is: $PATH"
-                        sh "docker-compose --version"
-                        sh "docker-compose up -d"
-                    }
-		        }
+                sh "docker-compose --version"
+                sh "docker-compose up -d"
+                    
             }
         }
-        
-        stage("Test endpoint and Push Image") {
+
+
+        stage("Test endpoint and Push Image to registry") {
             steps {
                 script {
                         while (true) {
                         def response = httpRequest "http://localhost:8000"
-                        println("Status: "+response.status)
-                        println("Content: "+response.content)
                         if (response.status == 200) {
                             docker.withRegistry( '', registryCredential ) {
                             dockerImage.push()
-                        } 
+                        }
+                        break 
                     }
                 }
             }
         }
-
-
+    }
         // stage('Push Image') {
         //     steps{
         //         script {
