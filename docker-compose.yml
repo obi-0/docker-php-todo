@@ -31,6 +31,14 @@ services:
     volumes:
       - db:/var/lib/mysql
 
+  localtunnel:
+    build:
+      context: ~/localtunnel
+      dockerfile: Dockerfile
+    network_mode: tooling_app_network
+        
+        command: --port 8080 --subdomain docker-projects
+
 volumes:
   app:
   db:
