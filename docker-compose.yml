@@ -36,8 +36,9 @@ services:
       context: ~/localtunnel
       dockerfile: Dockerfile
     network_mode: tooling_app_network
+    restart: unless-stopped
         
-        command: --port 8080 --subdomain docker-projects
+        command: --local-host 127.0.0.1 --port 8080 --subdomain docker-projects
 
 volumes:
   app:
