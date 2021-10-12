@@ -1,6 +1,6 @@
 pipeline {
     environment {
-    REGISTRY = "docker-hub-cred-2"
+    REGISTRY = credentials('docker-hub-cred-2')
     PATH = "$PATH:/usr/bin"
 
     }
@@ -41,10 +41,10 @@ pipeline {
                     while (true) {
                         def response = httpRequest 'http://localhost:8000'
                         if (response.status == 200) {
-                           withCredentials([usernameColonPassword(credentialsId: 'docker-hub-cred-2', variable: 'Registry')]) {
-                                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+                        //    withCredentials([usernameColonPassword(credentialsId: 'docker-hub-cred-2', variable: 'Registry')]) {
+                                // sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
                                 sh "docker push thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-                            }
+                            // }
                             break 
                         }
                     }
