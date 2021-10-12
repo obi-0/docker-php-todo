@@ -175,14 +175,78 @@ sudo apt-get install jenkins
     - Docker Compose Build Steps
     - HttpRequest
     
+- Create a new repository in your dockerhub account to push image into
 
 - We need to create credentials that we will reference so as to be able to push our image to the docker hub repository
 
-  - Click on  `Manage Jenkins` and go to `Manage Credentials`. Click on `global` and create a
+  - Click on  `Manage Jenkins` and go to `Manage Credentials`.
+  - Click on `global`
+  - Click on `add credentials` and choose `username with password`
+  - Input your dockerhub useername and password
 
-- Create a new repository in your dockerhub account to push image into
+- Create a Jenkinsfile in the php-todo directory that will build image, deploy application, make http request to see if it returns the status code 200 and then push the image to the dockerhub repository
 
-- Create a Jenkinsfile in the php-todo directory. 
+```
+pipeline {
+    environment {
+    REGISTRY = credentials('docker-hub-cred-2')
+    PATH = "$PATH:/usr/bin"
+
+    }
+    
+   
+    agent any
+
+    stages {
+
+        stage('Initial Cleanup') {
+            steps {
+                dir("${WORKSPACE}") {
+                deleteDir()
+                }
+            }
+        }
+  
+        stage('Checkout SCM') {
+            steps {
+                git branch: 'main', url: 'https://github.com/TheCountt/docker-php-todo.git'
+            }
+        }
+        
+        stage('Build image') {
+            steps {
+                sh "docker build -t thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER} ."
+            }
+        }
+        stage("Start application") {
+            steps {
+                sh "docker-compose --version"
+                sh "docker-compose up -d"
+            }
+        }
+        stage("Test Endpoint and Push Image to Registry") {
+            steps {
+                script {
+                    while (true) {
+                        def response = httpRequest 'http://localhost:8000'
+                        if (response.status == 200) {
+                                sh "docker push thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+                            break 
+                        }
+                    }
+                }
+            }
+        }
+ 
+        stage ("Remove images") {
+            steps {
+                sh "docker rmi thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+            }
+        }
+    }
+}
+```
+
 
 ### 2. Using Docker Container
 - Create a directory and name it `jenkins` and change into the directory.
