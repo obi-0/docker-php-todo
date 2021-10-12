@@ -141,8 +141,51 @@ docker push thecountt/php-todo:1.0.0
 ```
 
 ## CI/CD with Jenkins (Container or Machine)
-### Using Jenkins Container
-- Create a directory and name it `jenkins` and change inot the directory.
+
+### 1. Using Local Machine
+
+- Run the following command in your home directory to install java runtime:
+```
+sudo apt update -y
+sudo apt install openjdk-11-jdk
+```
+- Run the following commands to install jenkins:
+```
+wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > \
+    /etc/apt/sources.list.d/jenkins.list'
+sudo apt-get update
+sudo apt-get install jenkins
+```
+
+#### Unlocking Jenkins
+- When you first access a new Jenkins instance, you are asked to unlock it using an automatically-generated password.
+
+- Browse to http://localhost:8080 (or whichever port you configured for Jenkins when installing it) and wait until the Unlock Jenkins page appears and you can use
+
+`sudo cat /var/lib/jenkins/secrets/initialAdminPassword` to print the password on the terminal.
+
+
+#### Jenkins Pipeline
+- First we will install the plugins needed
+  - On the Jenkins Dashboard, click on `Manage Jenkins` and go to `Manage Plugins`.
+  - Search and install the following plugins:
+    - Blue Ocean
+    - Docker
+    - Docker Compose Build Steps
+    - HttpRequest
+    
+
+- We need to create credentials that we will reference so as to be able to push our image to the docker hub repository
+
+  - Click on  `Manage Jenkins` and go to `Manage Credentials`. Click on `global` and create a
+
+- Create a new repository in your dockerhub account to push image into
+
+- Create a Jenkinsfile in the php-todo directory. 
+
+### 2. Using Docker Container
+- Create a directory and name it `jenkins` and change into the directory.
 - Create a bridge network in Docker using the following docker network create command. We will use the network we have created earlier(tooling_app_network)
 
 - In order to execute Docker commands inside Jenkins nodes, download  the `docker:dind` Docker image so we can use it in our docker-compose file we will create:
