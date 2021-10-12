@@ -54,7 +54,7 @@ pipeline {
  
         stage ("Remove images") {
             steps {
-                sh "docker system prune -af"
+                sh "docker rmi thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
             }
         }
     }
