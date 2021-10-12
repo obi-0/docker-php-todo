@@ -31,7 +31,7 @@ services:
     volumes:
       - db:/var/lib/mysql
 
-  localtunnel:
+ localtunnel:
     build:
       context: ~/localtunnel
       dockerfile: Dockerfile
