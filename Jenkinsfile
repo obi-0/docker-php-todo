@@ -35,24 +35,24 @@ pipeline {
                 sh "docker-compose up -d"
             }
         }
-        stage("Test Endpoint and Push Image to Registry") {
-            steps {
-                script {
-                    while (true) {
-                        def response = httpRequest 'http://localhost:8000'
-                        if (response.status == 200) {
-                                sh "docker push thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-                            break 
-                        }
-                    }
-                }
-            }
-        }
+        // stage("Test Endpoint and Push Image to Registry") {
+        //     steps {
+        //         script {
+        //             while (true) {
+        //                 def response = httpRequest 'https://<name-of-website>.loca.lt'
+        //                 if (response.status == 200) {
+        //                         sh "docker push thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+        //                     break 
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
  
-        stage ("Remove images") {
-            steps {
-                sh "docker rmi thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-            }
-        }
+        // stage ("Remove images") {
+        //     steps {
+        //         sh "docker rmi thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+        //     }
+        // }
     }
 }
