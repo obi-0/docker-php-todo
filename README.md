@@ -184,7 +184,7 @@ sudo apt-get install jenkins
   - Click on `add credentials` and choose `username with password`
   - Input your dockerhub useername and password
 
-- Create a Jenkinsfile in the php-todo directory that will build image, deploy application, make http request to see if it returns the status code 200 and then push the image to the dockerhub repository
+- Create a Jenkinsfile in the php-todo directory that will build image from context in the github repo; deploy application; make http request to see if it returns the status code 200 & push the image to the dockerhub repository and finally clean-up stage where the  image is deleted on the Jenkins server
 
 ```
 pipeline {
@@ -194,7 +194,6 @@ pipeline {
 
     }
     
-   
     agent any
 
     stages {
@@ -246,6 +245,15 @@ pipeline {
     }
 }
 ```
+**Note: the docker compose package is in `usr/bin`, that is why it is specified in the jenkinsfile**
+
+- Click on "Scan Repository Now" 
+
+- A build will start. The pipeline should be successful now
+
+#### Github Webhook
+We need to create  a webhook so that Jenkins will automatically pick up changes in our github repo and trigger a build instead of havinf to click "Scan Repository Now" all the time on jenkins. However, we
+
 
 
 ### 2. Using Docker Container
