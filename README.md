@@ -1,7 +1,8 @@
 # PHP-TODO Application Containerization using Docker
 
-1. Download or clone php-todo repository using `wget` or `git clone`
-2. Write a dockerfile for php-todo app and save it in the php-todo directory
+- Download or clone php-todo repository using `wget` or `git clone`
+
+- Write a dockerfile for php-todo app and save it in the php-todo directory
 ```
 FROM php:7.4.24-apache
 LABEL Dare=dare@zooto.io
@@ -34,7 +35,7 @@ EXPOSE 80
 CMD ["start-apache"]
 ```
 
-4. Create a docker-compose.yml in the php-todo directory and paste the code below:
+- Create a docker-compose.yml in the php-todo directory and paste the code below:
 
 ```
 version: "3.9"
@@ -252,7 +253,7 @@ pipeline {
 - A build will start. The pipeline should be successful now
 
 #### Github Webhook
-We need to create  a webhook so that Jenkins will automatically pick up changes in our github repo and trigger a build instead of havinf to click "Scan Repository Now" all the time on jenkins. However, we
+We need to create  a webhook so that Jenkins will automatically pick up changes in our github repo and trigger a build instead of havinf to click "Scan Repository Now" all the time on jenkins. However, we cannot connect to our localhost because it i in a private network. We will have to use a proxy server. We will map our localhost to our proxy server. The proxy server will then generate a URL for us. We will input that URL in github webhooks so any changes we make to our github repo will automatically trigger a build.
 
 
 
