@@ -358,7 +358,7 @@ volumes:
    jenkins-docker-certs:
    jenkins-data:
 ```
-- Spin up jenkins containers:
+- Spin up jenkins container:
 ```
 docker-compose -f jenkins.yml up -d
 ```
@@ -375,22 +375,33 @@ docker-compose -f jenkins.yml up -d
 
 ### Jenkins Pipeline
 
+- Download plugins: HttpRequest; Docker; Docker Compose Build Steps
+
 - Create a new branch from our main branch in your github repo and name it "feature". So we have two github branches: main and feature
 
 - Create a new repository in your dockerhub account to push image into
 
-- Create a Jenkinsfile in the php-todo directory. Write a Jenkinsfile that will pick up the build context from the referenced github repo branch, simulate a Docker Build and a
-Docker Push to the dockerhub registry.
+- Create a Jenkinsfile in the php-todo directory. Write a Jenkinsfile that will pick up the build context from the referenced github repo branch, deploy application; make http request to see if it returns the status code 200 & push the image to the dockerhub repository and finally clean-up stage where the image is deleted on the Jenkins server
 
 
 ```
 pipeline {
     environment {
         registry = "thecountt/docker-php-todo"
-        registryCredential = 'docker-hub-cred'
+        registryCredential = "docker-hub-cred"
     }
+    
     agent any
     stages {
+        
+        stage('Initial Cleanup') {
+          steps {
+                dir("${WORKSPACE}") {
+                    deleteDir()
+                }
+            }
+        }
+
         
         stage('Cloning Git repository') {
           steps {
@@ -398,6 +409,7 @@ pipeline {
             }
         }
 
+        
         stage('Build Image') {
             steps{
                 script {
@@ -405,6 +417,30 @@ pipeline {
                 }
             }
         }
+
+        
+        stage("Start the app") {
+            steps {
+		          sh 'docker-compose --version'
+              sh 'docker-compose -f jenkins.yml up -d'
+            }
+    }	
+      
+      stage("Test endpoint") {
+            steps {
+                script {
+                    while (true) {
+                        def response = httpRequest 'http://localhost:8000'
+
+                        if (http.responseCode == 200) {
+                        sh 'echo "httpRequest Successsful"'
+                        break
+                        }
+                    }
+                }
+            }
+        }
+
 
         stage('Push Image') {
             steps{
@@ -416,18 +452,18 @@ pipeline {
             }
         }
 
+        
         stage('Remove Unused docker image') {
             steps{
                 sh "docker rmi $registry:$BUILD_NUMBER"
             }
         }
-
     }
 }
 ```
 
 
-- Create a Multibranch Pipeline using Blue Ocean.
+- Create a  Pipeline using Blue Ocean.
 
 - If you run a build, the pipeline will fail because we have not configured our dockerhub
 (registryCredential) in jenkins.
@@ -439,7 +475,70 @@ pipeline {
 
 - Click on "Scan Repository"
 
-- Run a build now on each pipeline now. The two pipelines should be successful
+- Run a build now on each pipeline now. The  pipeline should be successful
 
-- Create a github webhook so jenkins can automatically pickup changes and run a build.
+- Create a github webhook so jenkins can automatically pickup changes and run a build. But we cannot connect to a localhost in a private network. So we will use a proxy server called localtunnel.
+
+- Create a folder and name it localtunnel. Create a file in the folder and name it Dockerfile.lt
+- Paste the following code in the Dockerfile.lt
+```
+FROM node:lts-alpine3.14
+
+RUN npm install -g localtunnel
+
+ENTRYPOINT ["lt"]
+```
+
+- Go to the jenkins directory and in our jenkins.yml file, paste the localtunnel block of code into the file
+
+```
+version: "3.9"
+services:
+    docker:
+        image: "docker:dind"
+        container_name: jenkins-docker
+        privileged: true
+        network_mode: tooling_app_network
+        
+        environment:
+            - DOCKER_TLS_CERTDIR=/certs
+            - DOCKER_DRIVER=overlay2
+        volumes:
+            - 'jenkins-docker-certs:/certs/client'
+            - 'jenkins-data:/var/jenkins_home'
+        ports:
+            - "2376:2376"
+
+    myjenkins-blueocean:
+        image: "myjenkins-blueocean:1.1"
+        container_name: jenkins-blueocean
+        network_mode: tooling_app_network
+        environment:
+            - DOCKER_HOST=tcp://docker:2376
+            - DOCKER_CERT_PATH=/certs/client
+            - DOCKER_TLS_VERIFY=1
+        ports:
+            - "8080:8080"
+            - "50000:50000"
+        
+        volumes:
+            - "jenkins-data:/var/jenkins_home"
+            - "jenkins-docker-certs:/certs/client:ro"
+        
+
+    localtunnel:
+        build:
+          context: ~/localtunnel
+          dockerfile: Dockerfile.lt
+        network_mode: tooling_app_network
+        
+        command: --local-host myjenkins-blueocean --port 8080 --subdomain jenkins-container
+
+volumes:
+   docker:
+   myjenkins-blueocean:
+   jenkins-docker-certs:
+   jenkins-data:
+```
+
 
