@@ -37,7 +37,7 @@ services:
       dockerfile: Dockerfile
     network_mode: tooling_app_network
     restart: unless-stopped
-    command: --local-host 127.0.0.1 --port 8080 --subdomain docker-projects
+    command: --local-host web --port 8000 --subdomain dockerwebsite
 
 volumes:
   app:
