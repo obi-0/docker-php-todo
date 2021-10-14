@@ -563,3 +563,6 @@ docker logs <name-of-container or ID>
 - Go to your terminal and change something in your jenkinsfile and save and push to your github repo. If everything works out fine, this will trigger a build which you can see on your Jenkins Dashboard.
 
 
+**Note: Your localtunnel generated URL might be unable to load on your browser if you do not specify the HTTPS port in the URL. So you may do this `generated URL:443 e.g https://docker-experiment.loca.lt:443. Though, it is strongly adviced never to use this strategy for anything that has personally identifying information or anything sensitive.
+
+The best way to use localtunnel is to build your own server because that is far safer. To do that, click [her](https://github.com/localtunnel/server#deploy)**
