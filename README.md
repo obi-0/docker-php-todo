@@ -141,7 +141,7 @@ docker login
 docker push thecountt/php-todo:1.0.0
 ```
 
-## CI/CD with Jenkins (Container or Machine)
+## CI/CD with Jenkins (Machine or Container)
 
 ### 1. Using Local Machine
 
@@ -255,7 +255,7 @@ pipeline {
 #### Github Webhook
 We need to create  a webhook so that Jenkins will automatically pick up changes in our github repo and trigger a build instead of havinf to click "Scan Repository Now" all the time on jenkins. However, we cannot connect to our localhost because it i in a private network. We will have to use a proxy server. We will map our localhost to our proxy server. The proxy server will then generate a URL for us. We will input that URL in github webhooks so any changes we make to our github repo will automatically trigger a build.
 
-We will use localtunnel, a nodejs proxy server
+We will use **localtunnel**, a nodejs proxy server
 
 - Install nodejs npm nodejs-legacy if you do not have it installed already on your local machine
 ```
@@ -273,9 +273,16 @@ npm install -g localtunnel
 ```
 lt --port 8080 --subdomain docker-projects
 ```
-- Go to your github repo, click on `settings` and click on Webhooks and input the generated URL and save.
+- Go to github repository and click on `Settings`
+	- Click on `Webhooks`
+	- Click on `Add Webhooks`
+	- Input the generated URL with /postreceive as shown in the Payroad URL space
+	- Select application/json as the Content-Type
+	- Click on `Add Webhook` to save the webhook
+- Go to your terminal and change something in your jenkinsfile and save and push to your github repo. If everything works out fine, this will trigger a build which you can see on your Jenkins Dashboard.
 
-
+**Note: Your localtunnel generated URL might be unable to load on your browser if you do not specify the HTTPS port in the URL. So you may do this `generated URL:443 e.g https://docker-experiment.loca.lt:443. Though, it is strongly adviced never to use this strategy for anything that has personally identifying information or anything sensitive.
+The best way to use localtunnel is to build your own server because that is far safer. To do that, click [her](https://github.com/localtunnel/server#deploy)**
 
 ### 2. Using Docker Container
 - Create a directory and name it `jenkins` and change into the directory.
@@ -375,7 +382,7 @@ docker-compose -f jenkins.yml up -d
 
 ### Jenkins Pipeline
 
-- Download plugins: HttpRequest; Docker; Docker Compose Build Steps
+- Download plugins: **HttpRequest; Docker; Docker Compose Build Steps**
 
 - Create a new branch from our main branch in your github repo and name it "feature". So we have two github branches: main and feature
 
@@ -421,7 +428,7 @@ pipeline {
         
         stage("Start the app") {
             steps {
-		          sh 'docker-compose --version'
+	      sh 'docker-compose --version'
               sh 'docker-compose -f jenkins.yml up -d'
             }
     }	
@@ -540,5 +547,23 @@ volumes:
    jenkins-docker-certs:
    jenkins-data:
 ```
+
+- Go to the Jenkins dashboard and click on "Scan Repository Now" to trigger a build
+- Go to your terminal and run command 	`docker ps -a`. Copy the name of the or ID of the localtunnel.
+- Pass the name or the ID of the localtunnel container in this command below to get the generated URL
+```
+docker logs <name-of-container or ID>
+```
+- Copy the generated URL and load it on a browser to see if it is reachable
+- Go to github repository and click on `Settings`
+	- Click on `Webhooks`
+	- Click on `Add Webhooks`
+	- Input the generated URL with /postreceive as shown in the Payroad URL space
+	- Select application/json as the Content-Type
+	- Click on `Add Webhook` to save the webhook
+- Go to your terminal and change something in your jenkinsfile and save and push to your github repo. If everything works out fine, this will trigger a build which you can see on your Jenkins Dashboard.
+
+**Note: Your localtunnel generated URL might be unable to load on your browser if you do not specify the HTTPS port in the URL. So you may do this `generated URL:443 e.g https://docker-experiment.loca.lt:443. Though, it is strongly adviced never to use this strategy for anything that has personally identifying information or anything sensitive.
+The best way to use localtunnel is to build your own server because that is far safer. To do that, click [here](https://github.com/localtunnel/server#deploy)**
 
 
