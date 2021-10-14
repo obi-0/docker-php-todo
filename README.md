@@ -141,7 +141,7 @@ docker login
 docker push thecountt/php-todo:1.0.0
 ```
 
-## CI/CD with Jenkins (Container or Machine)
+## CI/CD with Jenkins (Machine or Container)
 
 ### 1. Using Local Machine
 
@@ -281,7 +281,8 @@ lt --port 8080 --subdomain docker-projects
 	- Click on `Add Webhook` to save the webhook
 - Go to your terminal and change something in your jenkinsfile and save and push to your github repo. If everything works out fine, this will trigger a build which you can see on your Jenkins Dashboard.
 
-
+**Note: Your localtunnel generated URL might be unable to load on your browser if you do not specify the HTTPS port in the URL. So you may do this `generated URL:443 e.g https://docker-experiment.loca.lt:443. Though, it is strongly adviced never to use this strategy for anything that has personally identifying information or anything sensitive.
+The best way to use localtunnel is to build your own server because that is far safer. To do that, click [her](https://github.com/localtunnel/server#deploy)**
 
 ### 2. Using Docker Container
 - Create a directory and name it `jenkins` and change into the directory.
