@@ -31,13 +31,13 @@ services:
     volumes:
       - db:/var/lib/mysql
 
- localtunnel:
-    build:
-      context: ~/localtunnel
-      dockerfile: Dockerfile
-    network_mode: tooling_app_network
-    restart: unless-stopped
-    command: --local-host web --port 8000 --subdomain dockerwebsite
+#  localtunnel:
+#     build:
+#       context: ~/localtunnel
+#       dockerfile: Dockerfile
+#     network_mode: tooling_app_network
+#     restart: unless-stopped
+#     command: --local-host web --port 8000 --subdomain dockerwebsite
 
 volumes:
   app:
