@@ -273,7 +273,13 @@ npm install -g localtunnel
 ```
 lt --port 8080 --subdomain docker-projects
 ```
-- Go to your github repo, click on `settings` and click on Webhooks and input the generated URL and save.
+- Go to github repository and click on `Settings`
+	- Click on `Webhooks`
+	- Click on `Add Webhooks`
+	- Input the generated URL with /postreceive as shown in the Payroad URL space
+	- Select application/json as the Content-Type
+	- Click on `Add Webhook` to save the webhook
+- Go to your terminal and change something in your jenkinsfile and save and push to your github repo. If everything works out fine, this will trigger a build which you can see on your Jenkins Dashboard.
 
 
 
@@ -375,7 +381,7 @@ docker-compose -f jenkins.yml up -d
 
 ### Jenkins Pipeline
 
-- Download plugins: HttpRequest; Docker; Docker Compose Build Steps
+- Download plugins: **HttpRequest; Docker; Docker Compose Build Steps**
 
 - Create a new branch from our main branch in your github repo and name it "feature". So we have two github branches: main and feature
 
@@ -421,7 +427,7 @@ pipeline {
         
         stage("Start the app") {
             steps {
-		          sh 'docker-compose --version'
+	      sh 'docker-compose --version'
               sh 'docker-compose -f jenkins.yml up -d'
             }
     }	
@@ -540,5 +546,20 @@ volumes:
    jenkins-docker-certs:
    jenkins-data:
 ```
+
+- Go to the Jenkins dashboard and click on "Scan Repository Now" to trigger a build
+- Go to your terminal and run command 	`docker ps -a`. Copy the name of the or ID of the localtunnel.
+- Pass the name or the ID of the localtunnel container in this command below to get the generated URL
+```
+docker logs <name-of-container or ID>
+```
+- Copy the generated URL and load it on a browser to see if it is reachable
+- Go to github repository and click on `Settings`
+	- Click on `Webhooks`
+	- Click on `Add Webhooks`
+	- Input the generated URL with /postreceive as shown in the Payroad URL space
+	- Select application/json as the Content-Type
+	- Click on `Add Webhook` to save the webhook
+- Go to your terminal and change something in your jenkinsfile and save and push to your github repo. If everything works out fine, this will trigger a build which you can see on your Jenkins Dashboard.
 
 
