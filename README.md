@@ -255,7 +255,7 @@ pipeline {
 #### Github Webhook
 We need to create  a webhook so that Jenkins will automatically pick up changes in our github repo and trigger a build instead of havinf to click "Scan Repository Now" all the time on jenkins. However, we cannot connect to our localhost because it i in a private network. We will have to use a proxy server. We will map our localhost to our proxy server. The proxy server will then generate a URL for us. We will input that URL in github webhooks so any changes we make to our github repo will automatically trigger a build.
 
-We will use localtunnel, a nodejs proxy server
+We will use **localtunnel**, a nodejs proxy server
 
 - Install nodejs npm nodejs-legacy if you do not have it installed already on your local machine
 ```
