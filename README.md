@@ -384,8 +384,6 @@ docker-compose -f jenkins.yml up -d
 
 - Download plugins: **HttpRequest; Docker; Docker Compose Build Steps**
 
-- Create a new branch from our main branch in your github repo and name it "feature". So we have two github branches: main and feature
-
 - Create a new repository in your dockerhub account to push image into
 
 - Create a Jenkinsfile in the php-todo directory. Write a Jenkinsfile that will pick up the build context from the referenced github repo branch, deploy application; make http request to see if it returns the status code 200 & push the image to the dockerhub repository and finally clean-up stage where the image is deleted on the Jenkins server
@@ -396,6 +394,7 @@ pipeline {
     environment {
         registry = "thecountt/docker-php-todo"
         registryCredential = "docker-hub-cred"
+	PATH = "$PATH:/usr/local/bin"
     }
     
     agent any
@@ -480,11 +479,16 @@ pipeline {
   c. In the "Registry credentials", click on "Add". Put your dockerhub account credentials
      (Username and Password) and save it.
 
+- We need to change the name of the path of the Jenkinsfile correctly on Jenkins or Jenkins pipeline will not run
+	a. Click on `Dashboard`
+	b. To the left, click on `Configure` and Scroll down to `Build Confugration` and make sure the path to the Jenkinsfile and is correct.
+	c. Click 'Save` at the bottom.
+
 - Click on "Scan Repository"
 
-- Run a build now on each pipeline now. The  pipeline should be successful
+- Run a build now. The  pipeline should be successful
 
-- Create a github webhook so jenkins can automatically pickup changes and run a build. But we cannot connect to a localhost in a private network. So we will use a proxy server called localtunnel.
+- Create a github webhook so jenkins can automatically pickup changes and run a build. But we cannot connect to a localhost in a private network. So we will use a proxy server called **localtunnel.**
 
 - Create a folder and name it localtunnel. Create a file in the folder and name it Dockerfile.lt
 - Paste the following code in the Dockerfile.lt
