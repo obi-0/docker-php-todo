@@ -39,7 +39,7 @@ pipeline {
             steps {
                 script {
                     while (true) {
-                        def response = httpRequest 'https://dockerwebsite.loca.lt'
+                        def response = httpRequest 'https://dockerwebsite.loca.lt:443'
                         if (response.status == 200) {
                                 sh "docker push thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
                             break 
