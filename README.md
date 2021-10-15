@@ -82,13 +82,8 @@ volumes:
   ```
 ![{2CB63BFB-700B-45F6-B8F7-D7CA37EC2162} png](https://user-images.githubusercontent.com/76074379/137538344-9d176fa3-86f1-4501-a776-4c92a8b884b2.jpg)
 
-- Create a file in php-todo directory and call it `create_user.sql` and paste the following code in it:
 
-```
-CREATE DATABASE homestead;
-CREATE USER 'homestead'@'%' IDENTIFIED BY 'sePret^1';
-GRANT ALL PRIVILEGES ON *.* TO 'homestead'@'%'
-```
+![{0E92F415-2FD2-4B80-8668-C99478FFFF57} png](https://user-images.githubusercontent.com/76074379/137549207-c6d38474-94a9-482c-9034-fcf61a3555a3.jpg)
 
 
 
@@ -133,6 +128,8 @@ docker build -t php-todo:latest .
 ```
 docker-compose up -d
 ```
+
+
 - We are going to open a docker hub account if we do not have already. Go to  your bbroswer and open a dockerhub account
 - On your terminal/editor, create a new tag for the image you want to push using the
 proper syntax.
@@ -185,7 +182,7 @@ sudo apt-get install jenkins
 
 `sudo cat /var/lib/jenkins/secrets/initialAdminPassword` to print the password on the terminal.
 
-
+![{19CD1653-CEAF-4F90-81E5-256330E7448E} png](https://user-images.githubusercontent.com/76074379/137549596-27a14fa9-9a86-4039-bfc4-8be9adb1a76a.jpg)
 
 #### Jenkins Pipeline
 - First we will install the plugins needed
@@ -197,6 +194,8 @@ sudo apt-get install jenkins
     - HttpRequest
     
 - Create a new repository in your dockerhub account to push image into
+
+![{6782567F-DE5D-4C06-83D8-07E392117EFE} png](https://user-images.githubusercontent.com/76074379/137549931-c60f0b5b-4fb8-4fa1-af38-33404263e198.jpg)
 
 - We need to create credentials that we will reference so as to be able to push our image to the docker hub repository
 
