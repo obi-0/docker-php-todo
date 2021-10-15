@@ -82,7 +82,17 @@ volumes:
   ```
 ![{2CB63BFB-700B-45F6-B8F7-D7CA37EC2162} png](https://user-images.githubusercontent.com/76074379/137538344-9d176fa3-86f1-4501-a776-4c92a8b884b2.jpg)
 
-4. Update the `.env` file
+- Create a file in php-todo directory and call it `create_user.sql` and paste the following code in it:
+
+```
+CREATE DATABASE homestead;
+CREATE USER 'homestead'@'%' IDENTIFIED BY 'sePret^1';
+GRANT ALL PRIVILEGES ON *.* TO 'homestead'@'%'
+```
+
+
+
+- Update the `.env` file
 ```
 APP_PORT=8000
 APP_ENV=local
@@ -176,6 +186,7 @@ sudo apt-get install jenkins
 `sudo cat /var/lib/jenkins/secrets/initialAdminPassword` to print the password on the terminal.
 
 
+
 #### Jenkins Pipeline
 - First we will install the plugins needed
   - On the Jenkins Dashboard, click on `Manage Jenkins` and go to `Manage Plugins`.
@@ -192,7 +203,9 @@ sudo apt-get install jenkins
   - Click on  `Manage Jenkins` and go to `Manage Credentials`.
   - Click on `global`
   - Click on `add credentials` and choose `username with password`
-  - Input your dockerhub useername and password
+  - Input your dockerhub username and password
+
+![{F069636D-EE64-4502-B73A-781C822FC9F8} png](https://user-images.githubusercontent.com/76074379/137545904-b1fa454c-cb1d-4866-bd97-157fd7a4f143.jpg)
 
 - Create a Jenkinsfile in the php-todo directory that will build image from context in the github repo; deploy application; make http request to see if it returns the status code 200 & push the image to the dockerhub repository and finally clean-up stage where the  image is deleted on the Jenkins server
 
@@ -255,11 +268,19 @@ pipeline {
     }
 }
 ```
+![{6683D9F0-2C19-470D-8389-F1A0BAFE7751} png](https://user-images.githubusercontent.com/76074379/137546716-7f0ddf18-b05f-45cf-b95c-6e2dfac56a91.jpg)
+
+
 **Note: the docker compose package is in `usr/bin`, that is why it is specified in the jenkinsfile**
 
 - Click on "Scan Repository Now" 
 
 - A build will start. The pipeline should be successful now
+
+
+![{1E38ABFB-5A45-4D94-A9C6-B95015D8E35F} png](https://user-images.githubusercontent.com/76074379/137547662-f7d58d0c-c95a-465c-ac3d-952b235ec1d4.jpg)
+
+![{C9FB3404-990A-4F72-9F98-893661BE041F} png](https://user-images.githubusercontent.com/76074379/137547562-13fb1d7f-05ab-4dde-8cf4-13aed5e22ab0.jpg)
 
 #### Github Webhook
 We need to create  a webhook so that Jenkins will automatically pick up changes in our github repo and trigger a build instead of havinf to click "Scan Repository Now" all the time on jenkins. However, we cannot connect to our localhost because it i in a private network. We will have to use a proxy server. We will map our localhost to our proxy server. The proxy server will then generate a URL for us. We will input that URL in github webhooks so any changes we make to our github repo will automatically trigger a build.
