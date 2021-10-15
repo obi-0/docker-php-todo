@@ -128,7 +128,7 @@ docker build -t php-todo:latest .
 ```
 docker-compose up -d
 ```
-
+![{6E56E0A6-D362-4ED3-ABB6-C6B097B2BF50} png](https://user-images.githubusercontent.com/76074379/137554026-2a2d501d-98ac-4d81-88d9-d629acb1c83e.jpg)
 
 - We are going to open a docker hub account if we do not have already. Go to  your bbroswer and open a dockerhub account
 - On your terminal/editor, create a new tag for the image you want to push using the
