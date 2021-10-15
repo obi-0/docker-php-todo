@@ -1,6 +1,10 @@
 # PHP-TODO Application Containerization using Docker
 
-- Download or clone php-todo repository using `wget` or `git clone`
+- Download or clone php-todo repository using `wget`(and unzip it) or `git clone`
+![{D9F51F4D-6434-4212-860E-E12F75E0DEF4} png](https://user-images.githubusercontent.com/76074379/137538985-828c6b19-fe13-43c7-8e0c-44fb44455dc3.jpg)
+
+![{DE7ACA34-86E0-4EBA-8F71-0E86E4B6E4D4} png](https://user-images.githubusercontent.com/76074379/137539144-d7914bad-072c-4b60-8d1e-7672221c4926.jpg)
+
 
 - Write a dockerfile for php-todo app and save it in the php-todo directory
 ```
@@ -34,6 +38,7 @@ EXPOSE 80
 
 CMD ["start-apache"]
 ```
+![{6A42FDDB-8B8D-4009-BD0F-4487E92250E7} png](https://user-images.githubusercontent.com/76074379/137537100-b2e6264f-0e10-4b97-b5f2-b34c37e5921f.jpg)
 
 - Create a docker-compose.yml in the php-todo directory and paste the code below:
 
@@ -75,6 +80,7 @@ volumes:
   app:
   db:
   ```
+![{2CB63BFB-700B-45F6-B8F7-D7CA37EC2162} png](https://user-images.githubusercontent.com/76074379/137538344-9d176fa3-86f1-4501-a776-4c92a8b884b2.jpg)
 
 4. Update the `.env` file
 ```
@@ -106,6 +112,7 @@ MAIL_USERNAME=null
 MAIL_PASSWORD=null
 MAIL_ENCRYPTION=null
 ```
+![{935414C1-7099-4F52-9EBF-24FA2D1B85B8} png](https://user-images.githubusercontent.com/76074379/137537533-8e6079a2-2aa6-46c4-95cc-6f91b1e90290.jpg)
 
 - Make sure you change directory to php-todo directory. Build image using this command:
 ```
@@ -123,7 +130,7 @@ proper syntax.
 ```
 docker tag php-todo:latest thecountt/php-todo:1.0.0
 ```
-
+![{A380BC13-5CC6-40ED-A34C-00FCC569E189} png](https://user-images.githubusercontent.com/76074379/137539643-637ca9c4-7737-433b-97c5-688db1dfed1d.jpg)
 - Run this command to see the image with the newly created tag
 
 ```
@@ -135,11 +142,13 @@ Login to your dockerhub account and type in your credentials
 ```
 docker login
 ```
+![{C8CA5105-2713-4511-9AEC-A46B41BFB7E1} png](https://user-images.githubusercontent.com/76074379/137540418-2a9d026d-89fb-4276-968d-95961566f74d.jpg)
 
 - Push the docker image from the local machine to the dockerhub repository
 ```
 docker push thecountt/php-todo:1.0.0
 ```
+![{80B6ABB2-FF9E-48E7-84CD-6FECF1CD5143} png](https://user-images.githubusercontent.com/76074379/137539999-fa21ec99-e1ac-4c4c-a609-bb666eaafa2f.jpg)
 
 ## CI/CD with Jenkins (Machine or Container)
 
