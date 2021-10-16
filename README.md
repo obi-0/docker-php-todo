@@ -158,6 +158,11 @@ docker push thecountt/php-todo:1.0.0
 
 ### 1. Using Local Machine
 
+-Stop and remove the manually deployed containers of above
+```
+docker-compose down
+```
+
 - Run the following command in your home directory to install java runtime:
 ```
 sudo apt update -y
