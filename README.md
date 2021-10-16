@@ -84,10 +84,6 @@ volumes:
 ![{2CB63BFB-700B-45F6-B8F7-D7CA37EC2162} png](https://user-images.githubusercontent.com/76074379/137538344-9d176fa3-86f1-4501-a776-4c92a8b884b2.jpg)
 
 
-![{0E92F415-2FD2-4B80-8668-C99478FFFF57} png](https://user-images.githubusercontent.com/76074379/137549207-c6d38474-94a9-482c-9034-fcf61a3555a3.jpg)
-
-
-
 - Update the `.env` file
 ```
 APP_PORT=8000
