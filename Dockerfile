@@ -20,6 +20,15 @@ RUN a2enmod rewrite
 
 RUN curl -sS https://getcomposer.org/installer |php && mv composer.phar /usr/local/bin/composer
 
+WORKDIR /root/php-todo
+
+RUN composer install --ignore-platform-reqs
+
+RUN php artisan migrate
+RUN php artisan key:generate
+RUN php artisan db:seed
+RUN php artisan serve --host:0.0.0.0
+
 # Copy application source
 COPY . /var/www
 RUN chown -R www-data:www-data /var/www
