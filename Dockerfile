@@ -10,6 +10,8 @@ RUN apt-get update --fix-missing && apt-get install -y \
   curl \
   wget
   
+RUN git clone https://github.com/darey-devops/php-todo.git $HOME/php-todo &>/dev/null
+
 # Install docker php dependencies
 RUN docker-php-ext-install pdo_mysql mysqli
 
@@ -20,12 +22,6 @@ RUN a2enmod rewrite
 
 RUN curl -sS https://getcomposer.org/installer |php && mv composer.phar /usr/local/bin/composer
 
-# Copy application source
-COPY . /var/www
-RUN chown -R www-data:www-data /var/www
-
-WORKDIR /var/www/html
-
 
 RUN composer install --ignore-platform-reqs
 
@@ -33,6 +29,10 @@ RUN php artisan migrate
 RUN php artisan key:generate
 RUN php artisan db:seed
 RUN php artisan serve --host:0.0.0.0
+
+# Copy application source
+COPY . /var/www
+RUN chown -R www-data:www-data /var/www
 
 EXPOSE 80
 
