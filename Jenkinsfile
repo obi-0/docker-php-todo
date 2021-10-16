@@ -24,35 +24,35 @@ pipeline {
             }
         }
         
-        stage('Build image') {
-            steps {
-                sh "docker build -t thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER} ."
-            }
-        }
+        // stage('Build image') {
+        //     steps {
+        //         sh "docker build -t thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER} ."
+        //     }
+        // }
         stage("Start application") {
             steps {
                 sh "docker-compose --version"
                 sh "docker-compose up -d"
             }
         }
-        stage("Test Endpoint and Push Image to Registry") {
-            steps {
-                script {
-                    while (true) {
-                        def response = httpRequest 'http://localhost:8000'
-                        if (response.status == 200) {
-                                sh "docker push thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-                            break 
-                        }
-                    }
-                }
-            }
-        }
+        // stage("Test Endpoint and Push Image to Registry") {
+        //     steps {
+        //         script {
+        //             while (true) {
+        //                 def response = httpRequest 'http://localhost:8000'
+        //                 if (response.status == 200) {
+        //                         sh "docker push thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+        //                     break 
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
  
 
         stage ("Remove images") {
             steps {
-                sh "docker-compose down -d"
+                sh "docker-compose down"
                 sh "docker rmi thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
             }
         }
