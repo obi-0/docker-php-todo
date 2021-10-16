@@ -22,6 +22,7 @@ RUN a2enmod rewrite
 
 RUN curl -sS https://getcomposer.org/installer |php && mv composer.phar /usr/local/bin/composer
 
+WORKDIR /root/php-todo
 
 RUN composer install --ignore-platform-reqs
 
