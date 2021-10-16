@@ -258,14 +258,14 @@ pipeline {
  
         stage ("Remove images") {
             steps {
-	    	sh "docker-compose down -d"
+	    	sh "docker-compose down"
                 sh "docker rmi thecountt/docker-php-todo:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
             }
         }
     }
 }
 ```
-![{6683D9F0-2C19-470D-8389-F1A0BAFE7751} png](https://user-images.githubusercontent.com/76074379/137546716-7f0ddf18-b05f-45cf-b95c-6e2dfac56a91.jpg)
+![{71A29707-09CD-4F04-B2BE-5CE000F75B4C} png](https://user-images.githubusercontent.com/76074379/137603739-a6a2fa21-07e8-4fcb-9bc4-1a946f3b998b.jpg)
 
 
 **Note: the docker compose package is in `usr/bin`, that is why it is specified in the jenkinsfile**
