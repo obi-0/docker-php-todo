@@ -41,6 +41,19 @@ CMD ["start-apache"]
 ```
 ![{6A42FDDB-8B8D-4009-BD0F-4487E92250E7} png](https://user-images.githubusercontent.com/76074379/137537100-b2e6264f-0e10-4b97-b5f2-b34c37e5921f.jpg)
 
+- Open the `start-apache` file, add the following commands below in addition to the commands already in the file:
+
+```
+composer install --no-plugins --no-scripts
+
+php artisan migrate
+php artisan key:generate
+php artisan db:seed
+
+apache2-foreground
+```
+![{8050675F-B9F2-4B9D-AA46-CA4B753FEB9A} png](https://user-images.githubusercontent.com/76074379/137628585-5dfd7524-aa8a-45b8-b7a4-35844709db1f.jpg)
+
 - Create a docker-compose.yml in the php-todo directory and paste the code below:
 
 ```
@@ -325,13 +338,13 @@ lt --port 8080 --subdomain docker-projects
 
 
 **Note: Your localtunnel generated URL might be unable to load on your browser if you do not specify the HTTPS port in the URL. So you may do this `generated URL:443 e.g https://docker-experiment.loca.lt:443. Though, it is strongly adviced never to use this strategy for anything that has personally identifying information or anything sensitive.
-The best way to use localtunnel is to build your own server because that is far safer. To do that, click [her](https://github.com/localtunnel/server#deploy)**
+The best way to use localtunnel is to build your own server because that is far safer. To do that, click [here](https://github.com/localtunnel/server#deploy)**
 
 ### 2. Using Docker Container
 - Create a directory and name it `jenkins` and change into the directory.
 - Create a bridge network in Docker using the following docker network create command. We will use the network we have created earlier(tooling_app_network)
 
-- In order to execute Docker commands inside Jenkins nodes, download  the `docker:dind` Docker image so we can use it in our docker-compose file we will create:
+- In order to execute Docker commands inside Jenkins nodes, download  the `docker:dind` Docker image so we can use it in our docker compose file we will create:
 
 ```
 docker pull docker:dind
@@ -354,18 +367,21 @@ RUN add-apt-repository \
        $(lsb_release -cs) stable"
 RUN curl -L \  
   "https://github.com/docker/compose/releases/download/v2.0.0-beta.6/docker-compose-$(uname -s)-$(uname -m)" \  
-  -o /usr/local/bin/docker-compose \  
-  && chmod +x /usr/local/bin/docker-compose
+  -o /usr/bin/docker-compose \  
+  && chmod +x /usr/bin/docker-compose
 RUN apt-get update && apt-get install -y docker-ce-cli
 USER jenkins
 RUN jenkins-plugin-cli --plugins "blueocean:1.25.0 docker-workflow:1.26"
 
 ```
+![{4E1248AE-F360-4413-9F2E-CA66975FBD37} png](https://user-images.githubusercontent.com/76074379/137628891-414df2b8-d62a-412e-99c5-8d2d56506df9.jpg)
 
    b. Build a new docker image from this Dockerfile and assign the image a meaningful name, e.g. "myjenkins-blueocean:1.1":
 ```
 docker build -t myjenkins-blueocean:1.1 . 
 ```
+![{DDD93499-A8DB-4D40-858D-C3FD470F4D10} png](https://user-images.githubusercontent.com/76074379/137629226-8082b26b-f1f4-4f21-b21e-61219476eb41.jpg)
+
 - Create a file and name it jenkins.yml. Paste the code below:
 
 ```
@@ -408,10 +424,13 @@ volumes:
    jenkins-docker-certs:
    jenkins-data:
 ```
+![{429A6E3A-590F-4087-A4AA-CC9656321D87} png](https://user-images.githubusercontent.com/76074379/137629108-78974dd5-9dca-41ff-be44-d44a0a46889e.jpg)
+
 - Spin up jenkins container:
 ```
 docker-compose -f jenkins.yml up -d
 ```
+![{0B77D6FC-5517-446F-8F9F-96456F3CD51F} png](https://user-images.githubusercontent.com/76074379/137629395-c5777a2c-6d28-4358-86a0-2b7ac18eff01.jpg)
 
 ### Unlocking Jenkins
 - When you first access a new Jenkins instance, you are asked to unlock it using an automatically-generated password.
@@ -425,7 +444,7 @@ docker-compose -f jenkins.yml up -d
 
 ### Jenkins Pipeline
 
-- Download plugins: **HttpRequest; Docker; Docker Compose Build Steps**
+- On Jenkins UI. Go to `Manage Plugins` and install the following plugins: **HttpRequest; Docker; Docker Compose Build Steps**
 
 - Create a new repository in your dockerhub account to push image into
 
@@ -510,6 +529,7 @@ pipeline {
     }
 }
 ```
+![{074CD953-FFF9-4541-AA56-BA4C930AF3C1} png](https://user-images.githubusercontent.com/76074379/137629996-aa882bfe-37dc-4d68-819a-be290f2a89fa.jpg)
 
 
 - Create a  Pipeline using Blue Ocean.
@@ -522,6 +542,8 @@ pipeline {
   c. In the "Registry credentials", click on "Add". Put your dockerhub account credentials
      (Username and Password) and save it.
 
+![{F069636D-EE64-4502-B73A-781C822FC9F8} png](https://user-images.githubusercontent.com/76074379/137630083-3b93691d-c8e6-43f5-86a0-04a5d286976c.jpg)
+
 - We need to change the name of the path of the Jenkinsfile correctly on Jenkins or Jenkins pipeline will not run
 	a. Click on `Dashboard`
 	b. To the left, click on `Configure` and Scroll down to `Build Confugration` and make sure the path to the Jenkinsfile and is correct.
@@ -531,7 +553,7 @@ pipeline {
 
 - Run a build now. The  pipeline should be successful
 
-- Create a github webhook so jenkins can automatically pickup changes and run a build. But we cannot connect to a localhost in a private network. So we will use a proxy server called **localtunnel.**
+- We have to create a github webhook so jenkins can automatically pickup changes and run a build. But we cannot connect to a localhost in a private network. So we will use a proxy server called **localtunnel.**
 
 - Create a folder and name it localtunnel. Create a file in the folder and name it Dockerfile.lt
 - Paste the following code in the Dockerfile.lt
@@ -595,6 +617,7 @@ volumes:
    jenkins-data:
 ```
 
+
 - Go to the Jenkins dashboard and click on "Scan Repository Now" to trigger a build
 - Go to your terminal and run command 	`docker ps -a`. Copy the name of the or ID of the localtunnel.
 - Pass the name or the ID of the localtunnel container in this command below to get the generated URL
@@ -608,7 +631,12 @@ docker logs <name-of-container or ID>
 	- Input the generated URL with /postreceive as shown in the Payroad URL space
 	- Select application/json as the Content-Type
 	- Click on `Add Webhook` to save the webhook
+
+
+
 - Go to your terminal and change something in your jenkinsfile and save and push to your github repo. If everything works out fine, this will trigger a build which you can see on your Jenkins Dashboard.
+
+
 
 **Note: Your localtunnel generated URL might be unable to load on your browser if you do not specify the HTTPS port in the URL. So you may do this `generated URL:443 e.g https://docker-experiment.loca.lt:443. Though, it is strongly adviced never to use this strategy for anything that has personally identifying information or anything sensitive.
 The best way to use localtunnel is to build your own server because that is far safer. To do that, click [here](https://github.com/localtunnel/server#deploy)**
